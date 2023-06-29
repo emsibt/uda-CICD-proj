@@ -10,8 +10,8 @@ jobs:
           keys: [frontend-build]
       - run:
           name: Build front-end
+          working_directory: ./frontend
           command: |
-            cd frontend
             npm install
             npm run build
       - save_cache:
@@ -27,11 +27,10 @@ jobs:
           keys: [backend-build]
       - run:
           name: Back-end build
+          working_directory: ./backend
           command: |
-            cd backend
             npm install
-            npm run start
-            npm run migrations
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
