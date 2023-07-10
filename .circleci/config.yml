@@ -244,9 +244,9 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert_migrations:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-       - run:
+      - run:
           name: Send migration status to kvdb.io OR memstash.io
-          command: |   
+          command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               # If you are using kvdb.io, generate the bucket ID "9GE4jRtKznmVKRfvdBABBe" in your local terminal first
@@ -414,7 +414,7 @@ workflows:
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
-           requires: [configure-infrastructure]
+          requires: [configure-infrastructure]
       # - deploy-frontend:
       #      requires: [run-migrations]
       # - deploy-backend:
