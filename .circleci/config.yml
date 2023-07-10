@@ -20,15 +20,6 @@ commands:
         type: string
     steps:
       - run:
-          name: Install aws-cli for destroy_environment step.
-          command: |
-            sudo apt install unzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
-            echo "AWS CLI version"
-            aws --version
-      - run:
           name: Destroy environments
           when: on_fail
           command: |
@@ -252,6 +243,15 @@ jobs:
           root: ~/
           paths:
             - project/backend/.env
+      - run:
+          name: Install aws-cli for destroy_environment step.
+          command: |
+            sudo apt install unzip curl
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
+            echo "AWS CLI version"
+            aws --version
       - run:
           name: Run migrations
           command: |
