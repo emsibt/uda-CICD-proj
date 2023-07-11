@@ -316,6 +316,7 @@ jobs:
             apk add --update ansible rsync 
             apk add curl
             pip3 install awscli
+            apk add --update npm
       - run:
           name: Deploy backend
           command: |
