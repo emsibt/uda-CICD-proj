@@ -1,9 +1,24 @@
 ---
-
-- name: "configuration play." 
+- name: "configuration play."
   hosts: web
   user: ubuntu
   gather_facts: false
+  pre_tasks:
+    - name: "install python for Ansible."
+      apt:
+        name: python3
+        state: present
+
+    - name: Make sure Python is installed
+      command: python3 --version
+      register: python_version
+
+    - name: "install npm for Ansible."
+      apt:
+        name:
+          - nodejs
+          - npm
+        state: present
   vars:
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
