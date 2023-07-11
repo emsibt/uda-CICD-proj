@@ -346,11 +346,15 @@ jobs:
       - run:
           name: Backend smoke test.
           command: |
-            ls 
-            pwd
-            export backend_url=$(curl -H "token: ecdfc255-81e1-4056-9efa-2d7fa10812e1" \
-            --request GET https://api.memstash.io/values/backend_url)
-            echo $backend_url
+            export BACKEND_IP=$(cat ~/project/.circleci/ansible/inventory.txt | sed 1d)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+              return 0
+            else 
+              return 1
+            fi
       - run:
           name: Frontend smoke test.
           command: |
@@ -432,9 +436,9 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test:
-      #      requires: [deploy-backend, deploy-frontend]
-      # - cloudfront-update:
-      #      requires: [smoke-test]
-      # - cleanup:
-      #      requires: [cloudfront-update]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
