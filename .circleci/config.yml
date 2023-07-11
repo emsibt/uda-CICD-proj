@@ -41,7 +41,7 @@ commands:
           # Need generate token on https://kvdb.io first.
           command: |
             echo "insecure" >> ~/.curlrc
-            SUCCESS=$(curl --insecure  https://kvdb.io/H6VrBSwXyRGMLiDvyUrEeQ/migration_<< parameters.workflow_id >>)
+            SUCCESS=$(curl --insecure  https://kvdb.io/WE66zUAxQKPLECEZxMgBYh/migration_<< parameters.workflow_id >>)
             if (( $SUCCESS == 1 ));
             then
               cd backend
@@ -270,14 +270,6 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Install dependencies
-          command: |
-            apk add curl
-            apk add --upgrade bash
-            apk add --update ansible
-            apk add openssh-client
-            pip3 install awscli
-      - run:
           name: Get backend url
           command: |
             export BACKEND_IP=$(cat ~/project/.circleci/ansible/inventory.txt | sed 1d)
@@ -315,7 +307,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["e0:ba:fb:45:81:09:9e:e2:49:a9:e9:3c:af:65:9e:bd"]
+          fingerprints: ["2f:75:16:63:89:b2:ad:86:eb:25:9d:19:61:1f:82:91"]
       - attach_workspace:
           at: ~/
       - run:
@@ -329,9 +321,12 @@ jobs:
           command: |
             ls /root
             ls /root/project/backend/
+            echo "Contents of inventory.txt file is ---------------"
             cat ~/project/.circleci/ansible/inventory.txt
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml
       # Here's where you will add some code to rollback on failure
+      - revert_migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - destroy_environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
@@ -432,10 +427,10 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #      requires: [run-migrations]
-      # - deploy-backend:
-      #      requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #      requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
