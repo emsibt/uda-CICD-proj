@@ -42,7 +42,7 @@ commands:
           command: |
             echo "insecure" >> ~/.curlrc
             SUCCESS=$(curl --insecure  https://kvdb.io/WE66zUAxQKPLECEZxMgBYh/migration_<< parameters.workflow_id >>)
-            if (( $SUCCESS == 1 ));
+            if [[ "${SUCCESS}" == "1" ]]
             then
               cd backend
               npm run migrations:revert
@@ -351,7 +351,7 @@ jobs:
             echo "API_URL = ${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-              return 0
+              return 1
             else 
               return 1
             fi
